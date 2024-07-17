@@ -3,12 +3,16 @@ import { LoaderFunctionArgs, redirect } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
 
 export const loader = async (args: LoaderFunctionArgs) => {
-  const { userId } = await getAuth(args);
-
-  console.log(userId);
+  const { userId, getToken } = await getAuth(args);
 
   if (!userId) {
     return redirect("/sign-in");
+  }
+
+  const token = await getToken();
+
+  if (!token) {
+    throw new Error("No token found");
   }
 
   return { userId };
